@@ -1,7 +1,7 @@
 ---
-title: "HW"
+title: "Analysis of living standards among various countries and continents"
 author: "Aman"
-date: "November 15, 2017"
+date: "November 16, 2017"
 output: html_document
 ---
 
