@@ -1,0 +1,137 @@
+---
+title: "Analysis of living standards among various countries and continents"
+author: "Aman"
+date: "16/11/2017"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r, echo=FALSE}
+library(gapminder)
+library(ggplot2)
+library(dplyr)
+library(ggrepel)
+library(directlabels)
+```
+
+
+```{r, echo=FALSE}
+gapminder_1952 <- gapminder %>%
+  filter( year == 1952 )
+
+ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal()
+
+gapminder_1952
+
+#ggplot(gapminder_1952, aes(x = country, y = gdpPercap, color = continent)) + geom_col() + theme_minimal()
+ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent)) + geom_line(aes(group = continent)) + theme_minimal()
+
+ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal() + scale_y_log10()
+
+
+
+```
+
+```{r, echo=FALSE}
+gapminder_2007 <- gapminder %>%
+  filter( year == 2007 )
+
+ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal()
+
+gapminder_2007
+
+ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal() + scale_y_log10()
+
+
+ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent)) + geom_line(aes(group = continent)) + theme_minimal()
+```
+
+
+
+
+
+```{r, echo=FALSE}
+gapminder_1952 <- gapminder %>%
+  filter( year == 1952) %>%
+  group_by(continent, year) %>%
+  summarize(medianLifeExp = median(lifeExp),
+            medianGdpPercap = median(gdpPercap))
+
+
+gapminder_1952
+
+ggplot(gapminder_1952, aes(x = reorder(continent, -medianGdpPercap), y = medianGdpPercap, color = continent)) + geom_col() + theme_minimal()
+
+
+```
+
+```{r, echo=FALSE}
+gapminder_2007 <- gapminder %>%
+  filter( year == 2007) %>%
+  group_by(continent, year) %>%
+  summarize(medianLifeExp = median(lifeExp),
+            medianGdpPercap = median(gdpPercap))
+
+
+gapminder_2007
+
+ggplot(gapminder_2007, aes(x = reorder(continent, -medianGdpPercap), y = medianGdpPercap, color = continent)) + geom_col() + theme_minimal()
+
+ggplot(gapminder, aes(x = lifeExp, y = gdpPercap, color = country)) + geom_line() + theme_minimal() + theme(legend.position = "none") + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.8))
+
+gapminder %>%
+  filter( country == "Kuwait" ) %>%
+  group_by(year)
+
+
+US_bylifeExp <- gapminder %>%
+  filter( country == "United States") %>%
+  arrange(lifeExp)
+US_bylifeExp
+
+ggplot(US_bylifeExp, aes(x = as.factor(year), y = lifeExp)) + geom_col() + coord_flip()
+
+America_bylifeExp <- gapminder %>%
+   filter( continent == "Americas") %>%
+   arrange(desc(lifeExp))
+
+America_bylifeExp
+```
+
+
+
+
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+
