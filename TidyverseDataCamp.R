@@ -157,9 +157,6 @@ ggplot(oceania_1952, aes(x = country, y = gdpPercap )) +
   geom_col()
 
 
-gapminder_1952 <- gapminder %>%
-  filter(year == 1952)
-
 # Create a histogram of population (pop)
 ggplot(gapminder_1952, aes(x = pop)) +
   geom_histogram()
@@ -189,4 +186,3 @@ ggplot(gapminder_1952, aes(x = continent, y = gdpPercap)) +
   scale_y_log10() +
   ggtitle("Comparing GDP per capita across continents")
 
-cat ("abc")

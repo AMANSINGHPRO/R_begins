@@ -1,5 +1,5 @@
 ---
-title: "Analysis of living standards among various countries and continents"
+title: "Analysis of socio-economic standards among various countries and continents"
 author: "Aman"
 date: "16/11/2017"
 output: html_document
@@ -9,53 +9,132 @@ runtime: shiny
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+#Introduction
 
-This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+Socioeconomics (also known as social economics) is the social science that studies how economic activity affects and is shaped by social processes. In general it analyzes how societies progress, stagnate, or regress because of their local or regional economy, or the global economy. Various parameters such as GDP per capita, population growth and life expectancy have been a reliable means used to measure the progress of societies.
 
-To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+Here we will be analysing the socioeconomic conditions across five continents from a period of 1952 to 2007. The dataset under investigation is `Gapminder` dataset for further details please refer to [Gapminder](https://www.gapminder.org/). Features present in the analysis and their definitions
 
-## Inputs and Outputs
+Feature          |        Definition
+---------------- |------------------------
+Country          | Name of the country
+Continent        | Name of the continent
+Year             | Year observation was recorded
+lifeExp          | Life expectancy is a statistical measure of the average time an organism is expected to live, based on the year of their birth, their current age and other demographic factors including sex.
+pop              | Population of the country in specific year
+gdpPercap        | GDP - per capita (PPP) compares GDP on a purchasing power parity basis divided by population as of 1 July for the same year.
 
-You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 library(gapminder)
 library(ggplot2)
 library(dplyr)
 library(ggrepel)
 library(directlabels)
+library(scales)
 ```
+
+Lets have a general overview of the data, the first number represents the number of rows or observations and next number represents number of columns or features present in the dataset. We can also see the features mentioned above.
+ **Number of rows = 1704** and **number of columns = 6**
+
+```{r, echo=FALSE}
+
+dim(gapminder)
+gapminder
+unique(gapminder$country)
+unique(gapminder$continent)
+unique(gapminder$year)
+
+```
+
+Here we can see that we have 142 countries, 5 continents and 12 times the observation was taken from 1952 to 2007. **Observations were taken after every five years**
+
+##Steps taken
+1. Data cleansing (if required)
+2. Data transformation
+3. Visualisations
+
+
+Now let's compare the situations back in  1952 and recently in 2007. We should filter the data first for year 1952. Let's have a quick look at it before visualising.
+
 
 
 ```{r, echo=FALSE}
 gapminder_1952 <- gapminder %>%
   filter( year == 1952 )
 
-ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal()
-
 gapminder_1952
-
-#ggplot(gapminder_1952, aes(x = country, y = gdpPercap, color = continent)) + geom_col() + theme_minimal()
-ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent)) + geom_line(aes(group = continent)) + theme_minimal()
-
-ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal() + scale_y_log10()
-
-
 
 ```
 
+Now let's have a look at the visualizations. We are interested in a GDP per capita vs life expectancy to evaluate the performance of various countries and continents. Rich and healthy countries will be present in the **top right** corner of the plot while the poor and unhealthy countries will be present on the **bottom left**.
+
+
+```{r, echo=FALSE}
+ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + 
+  geom_point() + 
+  theme_minimal() + 
+  ggtitle("gdpPercap vs lifeExp in year 1952")
+```
+
+Here we saw that most of the countries were poor and unhealthy especially the countries from Africa and Asia. North American countries were leading in better GDP per capita and higher life expectancy. In next plot we will connect the countries with each other based upon the similar continent.
+
+
+```{r, echo=FALSE}
+#ggplot(gapminder_1952, aes(x = country, y = gdpPercap, color = continent)) + geom_col() + theme_minimal()
+ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent)) + 
+  geom_line(aes(group = continent)) + 
+  theme_minimal() + 
+  ggtitle("countries in a continent connected by lines in year 1952")
+```
+
+Here we can see Kuwait had huge variations in their GDP because of hard conditions in the country in 80's. It faced a stock market crash in that decade followed by huge drop in oil prices which accounts a major part of economy. Before it could recover from these two events it also faced Gulf war in the middle east.
+
+
+```{r, echo=FALSE}
+#options(scipen = 10000)
+
+ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + 
+  geom_point() + 
+  theme_minimal() + 
+  scale_y_log10() + 
+  ggtitle(" Adjusted gdpPercap vs lifeExp in year 1952")
+
+```
+
+## Fast forward to 2007
+
+
+Lets filter the data for year 2007 and visualise it for analysis.
 ```{r, echo=FALSE}
 gapminder_2007 <- gapminder %>%
   filter( year == 2007 )
 
-ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal()
-
 gapminder_2007
 
-ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + geom_point() + theme_minimal() + scale_y_log10()
+ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + 
+  geom_point() + 
+  theme_minimal() + 
+  ggtitle("gdpPercap vs lifeExp in year 2007")
+```
+
+##Insights
+
+1. After the analysis we can clearly see that most countries from Europr have made progress in terms of gdpPercap and lifeExp both, whereas most of the countries from Africa are still having lower gdpPercap and lifeExp.
+
+2. Populous countries including India and China have shown a huge increase in lifeExp but with minor improvement in gdpPercap.
+```{r, echo=FALSE}
+ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + 
+  geom_point() + 
+  theme_minimal() + 
+  scale_y_log10() + 
+  ggtitle("Adjusted gdpPercap vs lifeExp in year")
 
 
-ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent)) + geom_line(aes(group = continent)) + theme_minimal()
+ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent)) + 
+  geom_line(aes(group = continent)) + 
+  theme_minimal() + 
+  ggtitle("countries in a continent connected by lines in year 2007")
 ```
 
 
@@ -72,10 +151,15 @@ gapminder_1952 <- gapminder %>%
 
 gapminder_1952
 
-ggplot(gapminder_1952, aes(x = reorder(continent, -medianGdpPercap), y = medianGdpPercap, color = continent)) + geom_col() + theme_minimal()
-
+ggplot(gapminder_1952, aes(x = reorder(continent, medianGdpPercap), y = medianGdpPercap, fill = continent)) + geom_col() + 
+  theme_minimal() + 
+  ggtitle("MedianGdpPercap varying among continents in decreasing order in Year 1952") + 
+  coord_flip()
 
 ```
+
+3. Here for the first time we came across the fact that Oceania continent which was hidden among rest large continents had a significantly higher medianGdpPercap followed by Europe and Americas.
+
 
 ```{r, echo=FALSE}
 gapminder_2007 <- gapminder %>%
@@ -86,10 +170,21 @@ gapminder_2007 <- gapminder %>%
 
 
 gapminder_2007
+```
 
-ggplot(gapminder_2007, aes(x = reorder(continent, -medianGdpPercap), y = medianGdpPercap, color = continent)) + geom_col() + theme_minimal()
+4. In 2007, here we can see that Oceania still has the highest medianGdpPercap but Europe has made significant progress and now has a very small difference that Oceania.
 
-ggplot(gapminder, aes(x = lifeExp, y = gdpPercap, color = country)) + geom_line() + theme_minimal() + theme(legend.position = "none") + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.8))
+```{r, echo=FALSE}
+ggplot(gapminder_2007, aes(x = reorder(continent, medianGdpPercap), y = medianGdpPercap, fill = continent)) + geom_col() + 
+  theme_minimal() + 
+  ggtitle("MedianGdpPercap varying among continents in decreasing order in Year 2007") +
+  coord_flip()
+
+ggplot(gapminder, aes(x = lifeExp, y = gdpPercap, color = country)) + 
+  geom_line() + 
+  theme_minimal() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.8))
 
 gapminder %>%
   filter( country == "Kuwait" ) %>%
@@ -101,7 +196,9 @@ US_bylifeExp <- gapminder %>%
   arrange(lifeExp)
 US_bylifeExp
 
-ggplot(US_bylifeExp, aes(x = as.factor(year), y = lifeExp)) + geom_col() + coord_flip()
+ggplot(US_bylifeExp, aes(x = as.factor(year), y = lifeExp, fill = as.factor(year))) + 
+  geom_col() + 
+  coord_flip()
 
 America_bylifeExp <- gapminder %>%
    filter( continent == "Americas") %>%
@@ -110,28 +207,6 @@ America_bylifeExp <- gapminder %>%
 America_bylifeExp
 ```
 
-
-
-
-
-## Embedded Application
-
-It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
-
-```{r tabsets, echo=FALSE}
-shinyAppDir(
-  system.file("examples/06_tabsets", package = "shiny"),
-  options = list(
-    width = "100%", height = 550
-  )
-)
-```
-
-Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
-
-You can also use the `shinyApp` function to define an application inline rather then in an external directory.
-
-In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
 
 
 
