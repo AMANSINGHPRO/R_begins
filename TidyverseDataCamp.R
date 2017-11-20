@@ -80,7 +80,8 @@ gapminder %>%
             maxGdpPercap = max(gdpPercap))
 
 # Find median life expectancy and maximum GDP per capita in each year/continent combination
-gapminder %>%
+a <- gapminder %>%
+  filter( year == 1952) %>%
   group_by(continent, year) %>%
   summarize(medianLifeExp = median(lifeExp),
             maxGdpPercap = max(gdpPercap))
@@ -157,6 +158,9 @@ ggplot(oceania_1952, aes(x = country, y = gdpPercap )) +
   geom_col()
 
 
+gapminder_1952 <- gapminder %>%
+  filter(year == 1952)
+
 # Create a histogram of population (pop)
 ggplot(gapminder_1952, aes(x = pop)) +
   geom_histogram()
@@ -186,3 +190,124 @@ ggplot(gapminder_1952, aes(x = continent, y = gdpPercap)) +
   scale_y_log10() +
   ggtitle("Comparing GDP per capita across continents")
 
+cat ("abc")
+
+Europe <- gapminder %>%
+  + filter( continent == "Europe")
+
+Europe
+
+Asia <- gapminder %>%
+   filter( continent == "Asia")
+
+Asia
+
+unique(gapminder$continent)
+
+Africa <- gapminder %>%
+   filter( continent == "Africa")
+
+Africa
+
+Americas <- gapminder %>%
+   filter( continent == "Americas")
+
+Americas
+
+Oceania <- gapminder %>%
+   filter( continent == "Oceania")
+Oceania
+
+
+US <- gapminder %>%
+   filter( country == "United States")
+US
+
+US_bylifeExp <- gapminder %>%
+  filter( country == "United States") %>%
+  arrange(lifeExp)
+US_bylifeExp
+
+US_bylifeExp <- gapminder %>%
+     filter( continent == "Americas") %>%
+     #arrange(desc(lifeExp)) %>%
+     mutate( gdp = gdpPercap * pop ) %>%
+     arrange(desc(gdp))
+US_bylifeExp
+
+#Improved
+afghanistan_country_only <- gapminder %>%
+  filter( country == "Afghanistan") %>%
+  arrange(lifeExp)
+
+ggplot( afghanistan_country_only, aes(x  = as.factor(year), y = lifeExp)) +
+  geom_col()
+
+#Filter by all continents
+filter_by_continent_Asia <- gapminder %>%
+  filter(continent == "Asia")
+
+filter_by_continent_Europe <- gapminder %>%
+  filter(continent == "Europe")
+
+filter_by_continent_Africa <- gapminder %>%
+  filter(continent == "Africa")
+
+filter_by_continent_Americas <- gapminder %>%
+  filter(continent == "Americas")
+
+filter_by_continent_Oceania <- gapminder %>%
+  filter(continent == "Oceania")
+
+#arrange continents by numerical values
+arrange_by_lifeExp_Asia <- filter_by_continent_Asia %>%
+  arrange(desc(lifeExp))
+
+arrange_by_lifeExp_Europe <- filter_by_continent_Europe %>%
+  arrange(desc(lifeExp))
+
+arrange_by_lifeExp_Africa <- filter_by_continent_Africa %>%
+  arrange(desc(lifeExp))
+
+arrange_by_lifeExp_Americas <- filter_by_continent_Americas %>%
+  arrange(desc(lifeExp))
+
+arrange_by_lifeExp_Oceania <- filter_by_continent_Oceania %>%
+  arrange(desc(lifeExp))
+
+by_cont <- gapminder %>%
+   group_by(continent) %>%
+   summarize(meanLifeExp = mean(lifeExp),
+   totalpop = sum(as.numeric(pop)))
+
+by_year_gap <- gapminder %>%
+  group_by(year) %>%
+  summarize(meanLifeExp = mean(lifeExp),
+            totalpop = sum(as.numeric(pop)))
+
+by_count <- gapminder %>%
+  group_by(country) %>%
+  summarize(meanLifeExp = mean(lifeExp),
+            meanpop = mean(pop),
+            meanGdppercap = mean(gdpPercap))
+
+by_count <- gapminder %>%
+     group_by(country) %>%
+     summarize(meanLifeExp = mean(lifeExp),
+     meanpop = mean(pop),
+     meanGdppercap = mean(gdpPercap)) %>%
+     arrange(desc(meanLifeExp))
+
+try_count <- gapminder %>%
+  group_by(continent) %>%
+  summarize(meanLifeExp = mean(lifeExp),
+            meanpop = mean(pop),
+            meanGdppercap = mean(gdpPercap)) %>%
+  arrange(desc(meanLifeExp))
+
+tryy_count <- gapminder %>%
+  group_by(year) %>%
+  summarize(meanLifeExp = mean(lifeExp),
+            meanpop = mean(pop),
+            meanGdppercap = mean(gdpPercap)) %>%
+  arrange(desc(meanLifeExp))
