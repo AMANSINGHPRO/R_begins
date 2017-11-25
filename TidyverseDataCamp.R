@@ -443,6 +443,23 @@ gapminder %>% filter(country == "Argentina")  %>%
   geom_histogram(bins = 5)
   
 
+#Saturday
+a <- gapminder %>%
+  filter( country %in% c("United States" , "Canada", "United Kingdom", "India", "Brazil"))
+a
+View(a)
 
+ggplot(a, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
 
+ggplot(a, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
 
+ggplot(a, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
