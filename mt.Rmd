@@ -25,7 +25,7 @@ pop              | Population of the country in specific year
 gdpPercap        | GDP - per capita (PPP) compares GDP on a purchasing power parity basis divided by population as of 1 July for the same year.
 
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(gapminder)
 library(ggplot2)
 library(dplyr)
