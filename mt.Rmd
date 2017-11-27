@@ -41,7 +41,7 @@ Lets have a general overview of the data, the first number represents the number
 
 dim(gapminder)
 gapminder
-unique(gapminder$country)
+#unique(gapminder$country)
 unique(gapminder$continent)
 unique(gapminder$year)
 
@@ -53,6 +53,10 @@ Here we can see that we have 142 countries, 5 continents and 12 times the observ
 1. Data cleansing (if required)
 2. Data transformation
 3. Visualisations
+```{r echo=FALSE, out.width='100%', message=FALSE}
+knitr::include_graphics('./data-science.png')
+
+```
 
 
 Now let's compare the situations back in  1952 and recently in 2007. We should filter the data first for year 1952. Let's have a quick look at it before visualising.
