@@ -35,6 +35,7 @@ library(knitr)
 library(scales)
 library(stargazer)
 library(pander)
+library(data.table)
 ```
 
 Lets have a general overview of the data, the first number represents the number of rows or observations and next number represents number of columns or features present in the dataset. We can also see the features mentioned above.
@@ -60,6 +61,48 @@ pander(for (i in 1:3) {
 model <- lm( lifeExp ~ gdpPercap, data = gapminder)
 pander(summary(model))
 pander(anova(model))
+
+a <- gapminder %>%
+  summarize(medianLifeExp = median(lifeExp))
+
+kable(a$medianLifeExp, format = "html")
+kable(head(iris), format = "html")
+
+DT <- data.table(V1 = c(1L, 2L),
+ V2 = LETTERS[1:3],
+ V3 = round(rnorm(4), 4),
+ V4 = 1:12)
+
+DT
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+
+DT <- data.table(mean = c(mean(gapminder$lifeExp), mean(gapminder$pop), mean(gapminder$gdpPercap)),
+                 median = c(median(gapminder$lifeExp), median(gapminder$pop), median(gapminder$gdpPercap)),
+                 modeof = c(Mode(gapminder$lifeExp), Mode(gapminder$pop), Mode(gapminder$gdpPercap)),
+                 max = c(max(gapminder$lifeExp), max(gapminder$pop), max(gapminder$gdpPercap)),
+                 min = c(min(gapminder$lifeExp), min(gapminder$pop), min(gapminder$gdpPercap)),
+                 unique = c(length(unique(gapminder$lifeExp)), length(unique(gapminder$pop)), length(unique(gapminder$gdpPercap))))
+
+DT
+
+ab <- gapminder %>%
+  summarize(missing_pop = sum(is.na(pop)),
+            mean_pop = mean(pop),
+            median_pop = median(pop),
+            missing_le = sum(is.na(lifeExp)),
+            mean_le = mean(lifeExp),
+            median_le = median(lifeExp),
+            missing_gdp = sum(is.na(gdpPercap)),
+            mean_gdp = mean(gdpPercap),
+            median_gdp = median(gdpPercap))
+kable(ab)
+
+
 
 
 ```
