@@ -83,6 +83,150 @@ library(knitr)
 options(knitr.kable.NA = "")
 knitr::kable(aba, digits = 2)
 
+Africa <- gapminder %>%
+  filter( continent == "Africa")
+
+ggplot(Africa, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Life expectancy varying with years in Africa") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  expand_limits(y = 0)
+
+ggplot(Africa, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("gdpPercap varying with years in Africa") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot(Africa, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Population varying with years in Africa") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+
+Asia <- gapminder %>%
+  filter( continent == "Asia")
+
+ggplot(Asia, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Life expectancy varying with years in Asia") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  expand_limits( y = 0 )
+
+ggplot(Asia, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("gdpPercap varying with years in Asia") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot(Asia, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Population varying with years in Asia") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+Europe <- gapminder %>%
+  filter( continent == "Europe")
+
+ggplot(Europe, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Life expectancy varying with years in Europe") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  expand_limits( y = 0 )
+
+ggplot(Europe, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("gdpPercap varying with years in Europe") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot(Europe, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Population varying with years in Europe") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+Americas <- gapminder %>%
+  filter( continent == "Americas")
+
+ggplot(Americas, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Life expectancy varying with years in Americas") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  expand_limits( y = 0 )
+
+ggplot(Americas, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("gdpPercap varying with years in Americas") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot(Americas, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Population varying with years in Americas") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+Oceania <- gapminder %>%
+  filter( continent == "Oceania")
+
+ggplot(Oceania, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Life expectancy varying with years in Oceania") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  expand_limits( y = 0 )
+
+ggplot(Oceania, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("gdpPercap varying with years in Oceania") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot(Oceania, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  ggtitle("Population varying with years in Oceania") +
+  theme_minimal() +
+  theme(legend.position = "none")
 
 
 ```
