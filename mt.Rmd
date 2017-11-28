@@ -36,12 +36,13 @@ library(scales)
 library(stargazer)
 library(pander)
 library(data.table)
+library(tidyr)
 ```
 
 Lets have a general overview of the data, the first number represents the number of rows or observations and next number represents number of columns or features present in the dataset. We can also see the features mentioned above.
  **Number of rows = 1704** and **number of columns = 6**, Number of countries
 
-```{r, echo=FALSE}
+```{r, r, echo=FALSE, warning=FALSE, message=FALSE}
 kable(gapminder[1:5, ], caption = "A table")
 
 gapSummary <- apply(gapminder[, 4:6], 2, function(x) tapply(x, gapminder$continent, 
@@ -62,46 +63,25 @@ model <- lm( lifeExp ~ gdpPercap, data = gapminder)
 pander(summary(model))
 pander(anova(model))
 
-a <- gapminder %>%
-  summarize(medianLifeExp = median(lifeExp))
 
-kable(a$medianLifeExp, format = "html")
-kable(head(iris), format = "html")
+#generate key-value pairs
+gapy <- gather(gapminder)
 
-DT <- data.table(V1 = c(1L, 2L),
- V2 = LETTERS[1:3],
- V3 = round(rnorm(4), 4),
- V4 = 1:12)
+#This is resulting in NA
+# This should have count of unique values, missing,  counts == 0, min, max, mean, median, standard deviation
+#Group by the key and make any values that should return number a numeric first. 
 
-DT
-
-Mode <- function(x) {
-  ux <- unique(x)
-  ux[which.max(tabulate(match(x, ux)))]
-}
+aba <- gapy %>%
+  group_by(key) %>%
+  summarise(mean = mean(as.numeric(value)),
+            median = median(as.numeric(value)),
+            missing = sum(is.na(value)))
 
 
-DT <- data.table(mean = c(mean(gapminder$lifeExp), mean(gapminder$pop), mean(gapminder$gdpPercap)),
-                 median = c(median(gapminder$lifeExp), median(gapminder$pop), median(gapminder$gdpPercap)),
-                 modeof = c(Mode(gapminder$lifeExp), Mode(gapminder$pop), Mode(gapminder$gdpPercap)),
-                 max = c(max(gapminder$lifeExp), max(gapminder$pop), max(gapminder$gdpPercap)),
-                 min = c(min(gapminder$lifeExp), min(gapminder$pop), min(gapminder$gdpPercap)),
-                 unique = c(length(unique(gapminder$lifeExp)), length(unique(gapminder$pop)), length(unique(gapminder$gdpPercap))))
-
-DT
-
-ab <- gapminder %>%
-  summarize(missing_pop = sum(is.na(pop)),
-            mean_pop = mean(pop),
-            median_pop = median(pop),
-            missing_le = sum(is.na(lifeExp)),
-            mean_le = mean(lifeExp),
-            median_le = median(lifeExp),
-            missing_gdp = sum(is.na(gdpPercap)),
-            mean_gdp = mean(gdpPercap),
-            median_gdp = median(gdpPercap))
-kable(ab)
-
+#Use knitr to control how NAs are printed and the number of digits displayed. 
+library(knitr)
+options(knitr.kable.NA = "")
+knitr::kable(aba, digits = 2)
 
 
 
