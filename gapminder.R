@@ -25,3 +25,6 @@ table(
   x = clusters$cluster, 
   y = gapminder$continent)
 
+fviz_nbclust( gapminder[, 4:6], kmeans, method = "wss")
+fviz_nbclust( gapminder[, 4:6], kmeans, method = "silhouette")
+fviz_nbclust( gapminder[, 4:6], kmeans, nstart = 25, method = "gap_stat", nboot = 50)
