@@ -46,20 +46,33 @@ library(factoextra)
 library(NbClust)
 ```
 
-Lets have a general overview of the data, the first number represents the number of rows or observations and next number represents number of columns or features present in the dataset. We can also see the features mentioned above.
- **Number of rows = 1704** and **number of columns = 6**, Number of countries
+Lets have a quick look at the data and we can see all of the six features and their associated values among top five rows.
 
 ```{r summary.table , echo=FALSE, warning=FALSE, message=FALSE}
-kable(gapminder[1:5, ], caption = "A table")
+kable(gapminder[1:5, ], caption = "Gapminder data table")
+```
+
+In order to have a higher level of understanding of this data having a look at summary table is a crucial step. The key column represents the list of countries present in the data. In rest of the columns respective statistical mean, median and missing values are represented. We can see it is a clean data with zero missing values.
+
+```{r summarytableone, echo=FALSE, warning=FALSE, message=FALSE}
+
+gapy <- gather(gapminder)
+
+aba <- gapy %>%
+  group_by(key) %>%
+  summarise(mean = mean(as.numeric(value)),
+            median = median(as.numeric(value)),
+            missing = sum(is.na(value)))
+
+library(knitr)
+options(knitr.kable.NA = "")
+knitr::kable(aba, digits = 2)
+
 
 gapSummary <- apply(gapminder[, 4:6], 2, function(x) tapply(x, gapminder$continent, 
     summary))
 gapminderSummary <- lapply(gapSummary, do.call, what = rbind)
 
-
-suppressPackageStartupMessages(library(pander))
-panderOptions("table.split.table", Inf)  ## don't split tables
-pander(gapminderSummary[1:3])
 
 pander(for (i in 1:3) {
     set.caption(sub(".", " ", names(gapminderSummary)[i], fixed = TRUE))
@@ -72,68 +85,92 @@ pander(anova(model))
 
 
 #generate key-value pairs
-gapy <- gather(gapminder)
 
 #This is resulting in NA
 # This should have count of unique values, missing,  counts == 0, min, max, mean, median, standard deviation
 #Group by the key and make any values that should return number a numeric first. 
 
-aba <- gapy %>%
-  group_by(key) %>%
-  summarise(mean = mean(as.numeric(value)),
-            median = median(as.numeric(value)),
-            missing = sum(is.na(value)))
-
-
 #Use knitr to control how NAs are printed and the number of digits displayed. 
-library(knitr)
-options(knitr.kable.NA = "")
-knitr::kable(aba, digits = 2)
 
+```
+
+There are total 52 countries in Africa. Mauritius and Reunion have highest life expectancy and sierra leone, Gambia, Mozambique, Burkina faso, guinea-Bissau Angola least in 1952, in 2007 top countries are Reunion, Libya, Tunisia, Mauritius, Algeria and least are 
+
+
+```{r africa.plot1, eval = F}
 
 Africa <- gapminder %>%
   filter( continent == "Africa")
-```
 
 
-
-
-```{r africa.plot}
 ggplot(Africa, aes(x = year, y = lifeExp, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
-  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
-  ggtitle("Life expectancy varying with years in Africa") +
+  labs( title = "Life expectancy varying with years in Africa",
+         x =  "Years",
+         y = "Life Expectancy",
+         subtitle = "Kuwait and other Countyr highlighed.") +
   theme_minimal() +
   theme(legend.position = "none") +
   expand_limits(y = 0)
+# geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
 ```
+
+```{r africa.plot2, eval = F}
+ggplot(Africa, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  ggtitle("gdpPercap varying with years in Africa") +
+  theme_minimal() +
+  theme(legend.position = "none") 
+ #geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+```
+
+```{r africa.plot3, eval = F}
+ggplot(Africa, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  ggtitle("Population varying with years in Africa") +
+  theme_minimal() +
+  theme(legend.position = "none") 
+#  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+```
+
+
+```{r filtered, eval= F}
+za <- Africa %>%
+  filter(country %in% c("Sierra Leone", "Reunion", "Libya", "Rwanda", "Zimbabwe", "Botswana", "Zambia"))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+```
+
+```{r filteredtwo, eval=F}
+za <- Africa %>%
+  filter(country %in% c("Libya", "Gabon", "Botswana", "Equitorial Guinea", "Angola", "Reunion", "Zimbabwe", "Rwanda"))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+```
+
+```{r filteredthree, eval=F}
+za <- Africa %>%
+  filter(country %in% c("Sierra Leone", "Reunion", "Libya", "Rwanda", "Zimbabwe", "Botswana", "Zambia"))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+```
+
 
 Here is my plot 
 
 
-```{r}
-ggplot(Africa, aes(x = year, y = gdpPercap, colour = country)) + 
-  geom_line() + 
-  theme(legend.position = "none") + 
-  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
-  ggtitle("gdpPercap varying with years in Africa") +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-ggplot(Africa, aes(x = year, y = pop, colour = country)) + 
-  geom_line() + 
-  theme(legend.position = "none") + 
-  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
-  ggtitle("Population varying with years in Africa") +
-  theme_minimal() +
-  theme(legend.position = "none")
-
+```{r Asiaplot, eval = F}
 
 
 Asia <- gapminder %>%
   filter( continent == "Asia")
+```
 
+```{r Asiaplotone, eval = F}
 ggplot(Asia, aes(x = year, y = lifeExp, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
@@ -158,11 +195,34 @@ ggplot(Asia, aes(x = year, y = pop, colour = country)) +
   ggtitle("Population varying with years in Asia") +
   theme_minimal() +
   theme(legend.position = "none")
+```
 
 
+```{r Asiaplottwo, eval=F}
+za <- Asia %>%
+  filter(country %in% c("China", "Cambodia", "Iraq", "Japan", "Israel", "Myanmar", "Singapore", "Hong Kong, China", "Korea, Rep.", "Korea, Dem. Rep."))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Asia %>%
+  filter(country %in% c("China","Kuwait", "Cambodia", "Iraq", "Japan", "Israel", "Myanmar", "Singapore", "Hong Kong, China", "Korea, Rep.", "Korea, Dem. Rep."))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Asia %>%
+  filter(country %in% c("India" ,"China","Kuwait", "Cambodia", "Iraq", "Japan", "Israel", "Myanmar", "Singapore", "Hong Kong, China", "Korea, Rep.", "Korea, Dem. Rep."))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+
+```
+
+
+
+```{r Europeplot, eval = T}
 Europe <- gapminder %>%
   filter( continent == "Europe")
+```
 
+
+```{r Europeplotone, eval = F}
 ggplot(Europe, aes(x = year, y = lifeExp, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
@@ -187,11 +247,32 @@ ggplot(Europe, aes(x = year, y = pop, colour = country)) +
   ggtitle("Population varying with years in Europe") +
   theme_minimal() +
   theme(legend.position = "none")
+```
+
+```{r Europeplottwo, eval = F}
+za <- Europe %>%
+  filter(country %in% c("Romania", "Bulgaria", "Hungary", "Albania", "Ireland", "Norway", "Iceland", "Netherland", "Sweden", "Denmark", "Switzerland"))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Europe %>%
+  filter(country %in% c("Croatia","Serbia","Slovenia","Iceland","Romania", "Finland","Bulgaria", "Hungary", "Albania", "Ireland", "Norway", "Iceland", "Netherland", "Sweden", "Denmark", "Switzerland"))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Europe %>%
+  filter(country %in% c("Germany", "Turkey" , "Croatia","Serbia","Slovenia","Iceland","Romania", "Finland","Bulgaria", "Hungary", "Albania", "Ireland", "Norway", "Iceland", "Netherland", "Sweden", "Denmark", "Switzerland"))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
 
 
+```
+
+
+
+```{r Americasplot, eval  = T}
 Americas <- gapminder %>%
   filter( continent == "Americas")
+```
 
+```{r Americasplotone, eval  = F}
 ggplot(Americas, aes(x = year, y = lifeExp, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
@@ -216,8 +297,25 @@ ggplot(Americas, aes(x = year, y = pop, colour = country)) +
   ggtitle("Population varying with years in Americas") +
   theme_minimal() +
   theme(legend.position = "none")
+```
+
+```{r Americasplottwo, eval  = T}
+za <- Americas %>%
+  filter(country %in% c( "Uruguay","Venezuela","Argentina", "Nicaragua", "El Salvador", "Chile", "Cuba", "Puerto Rico", "Costa Rica", "Canada", "United States"))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Americas %>%
+  filter(country %in% c( "Uruguay","Venezuela","Argentina", "Nicaragua", "El Salvador", "Chile", "Cuba", "Puerto Rico", "Costa Rica", "Canada", "United States"))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Americas %>%
+  filter(country %in% c( "Uruguay","Venezuela","Argentina", "Nicaragua", "El Salvador", "Chile", "Cuba", "Puerto Rico", "Costa Rica", "Canada", "United States"))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+```
 
 
+```{r Oceaniaplot, eval = F}
 Oceania <- gapminder %>%
   filter( continent == "Oceania")
 
@@ -245,7 +343,9 @@ ggplot(Oceania, aes(x = year, y = pop, colour = country)) +
   ggtitle("Population varying with years in Oceania") +
   theme_minimal() +
   theme(legend.position = "none")
+```
 
+```{r USCAUKIB, eval = F}
 a <- gapminder %>%
   filter( country %in% c("United States" , "Canada", "United Kingdom", "India", "Brazil"))
 
@@ -266,8 +366,11 @@ ggplot(a, aes(x = year, y = gdpPercap, colour = country)) +
   theme(legend.position = "none") + 
   geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
   theme_minimal()
+```
 
 
+
+```{r corplot, eval = F}
 M <- cor(gapminder[4:6])
 corrplot.mixed(M)
 kable(M)
@@ -276,12 +379,12 @@ kable(M)
 ```
 
 
-```{r}
+```{r, eval = F}
 cor.test(gapminder$pop, gapminder$gdpPercap)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 
 year <- as.factor(gapminder$year)
 year <- unique(year)
@@ -317,7 +420,7 @@ gapminder_1952
 Now let's have a look at the visualizations. We are interested in a GDP per capita vs life expectancy to evaluate the performance of various countries and continents. Rich and healthy countries will be present in the **top right** corner of the plot while the poor and unhealthy countries will be present on the **bottom left**.
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, eval = F}
 
 ggplot(gapminder, aes(x = pop)) +
   geom_histogram() +
@@ -379,7 +482,7 @@ Europe <- gapminder %>%
 Here we saw that most of the countries were poor and unhealthy especially the countries from Africa and Asia. North American countries were leading in better GDP per capita and higher life expectancy. In next plot we will connect the countries with each other based upon the similar continent.
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 #ggplot(gapminder_1952, aes(x = country, y = gdpPercap, color = continent)) + geom_col() + theme_minimal()
 ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent)) + 
   geom_line(aes(group = continent)) + 
@@ -390,7 +493,7 @@ ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent)) +
 Here we can see Kuwait had huge variations in their GDP because of hard conditions in the country in 80's. It faced a stock market crash in that decade followed by huge drop in oil prices which accounts a major part of economy. Before it could recover from these two events it also faced Gulf war in the middle east.
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 #options(scipen = 10000)
 
 ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + 
@@ -405,7 +508,7 @@ ggplot(gapminder_1952, aes(x = lifeExp, y = gdpPercap, color = continent, size =
 
 
 Lets filter the data for year 2007 and visualise it for analysis.
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 gapminder_2007 <- gapminder %>%
   filter( year == 2007 )
 
@@ -422,7 +525,7 @@ ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size =
 1. After the analysis we can clearly see that most countries from Europr have made progress in terms of gdpPercap and lifeExp both, whereas most of the countries from Africa are still having lower gdpPercap and lifeExp.
 
 2. Populous countries including India and China have shown a huge increase in lifeExp but with minor improvement in gdpPercap.
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent, size = pop)) + 
   geom_point() + 
   theme_minimal() + 
@@ -440,7 +543,7 @@ ggplot(gapminder_2007, aes(x = lifeExp, y = gdpPercap, color = continent)) +
 
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 gapminder_1952 <- gapminder %>%
   filter( year == 1952) %>%
   group_by(continent, year) %>%
@@ -460,7 +563,7 @@ ggplot(gapminder_1952, aes(x = reorder(continent, medianGdpPercap), y = medianGd
 3. Here for the first time we came across the fact that Oceania continent which was hidden among rest large continents had a significantly higher medianGdpPercap followed by Europe and Americas.
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=F}
 gapminder_2007 <- gapminder %>%
   filter( year == 2007) %>%
   group_by(continent, year) %>%
@@ -473,7 +576,7 @@ gapminder_2007
 
 4. In 2007, here we can see that Oceania still has the highest medianGdpPercap but Europe has made significant progress and now has a very small difference that Oceania.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = F}
 ggplot(gapminder_2007, aes(x = reorder(continent, medianGdpPercap), y = medianGdpPercap, fill = continent)) + geom_col() + 
   theme_minimal() + 
   ggtitle("MedianGdpPercap varying among continents in decreasing order in Year 2007") +
