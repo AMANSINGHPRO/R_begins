@@ -2,6 +2,7 @@
 library(gapminder)
 library(dplyr)
 library(ggplot2)
+library(directlabels)
 
 dim(gapminder)
 
@@ -193,7 +194,7 @@ ggplot(gapminder_1952, aes(x = continent, y = gdpPercap)) +
 cat ("abc")
 
 Europe <- gapminder %>%
-  + filter( continent == "Europe")
+  filter( continent == "Europe")
 
 Europe
 
@@ -335,7 +336,6 @@ try_group_by_year_in_country <- gapminder %>%
             meanpop = mean(pop),
             meangdpPercap = mean(gdpPercap))
 View(try_group_by_year_in_country)
-ggplot(try_group_by_year_in_country, aes( y = meanlifeExp, color = country)) + geom_histogram()
 
 ggplot(gapminder, aes(x = year, y = lifeExp, colour = country)) + geom_line() + theme(legend.position = "none")
 
@@ -348,6 +348,11 @@ ggplot(a, aes(x = year, y = lifeExp, colour = country)) +
   geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
 
 ggplot(a, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+ggplot(a, aes(x = year, y = pop, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
   geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
@@ -463,3 +468,74 @@ ggplot(a, aes(x = year, y = gdpPercap, colour = country)) +
   geom_line() + 
   theme(legend.position = "none") + 
   geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+#Tuesday
+year_1952 <- gapminder %>%
+  filter(year == 1952)
+
+#Wednesday
+descending_lifeExp <- gapminder %>%
+  arrange(desc(lifeExp))
+
+descending_gdpPercap <- gapminder %>%
+  arrange(desc(gdpPercap))
+
+descending_pop <- gapminder %>%
+  arrange(desc(pop))
+
+score <- gapminder %>%
+  mutate( score = lifeExp * gdpPercap)
+
+descending_score <- score %>%
+  arrange(desc(score))
+
+#Eve
+za <- a %>%
+  filter(country %in% c("Sierra Leone", "Reunion", "Libya", "Rwanda", "Zimbabwe", "Botswana", "Zambia"))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- a %>%
+  filter(country %in% c("Libya", "Gabon", "Botswana", "Equitorial Guinea", "Angola", "Reunion"))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- a %>%
+  filter(country %in% c("Sierra Leone", "Reunion", "Libya", "Rwanda", "Zimbabwe", "Botswana", "Zambia"))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Asia %>%
+  filter(country %in% c("China","Kuwait", "Cambodia", "Iraq", "Japan", "Israel", "Myanmar", "Singapore", "Hong Kong, China", "Korea, Rep.", "Korea, Dem. Rep."))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Asia %>%
+  filter(country %in% c("China","Kuwait", "Cambodia", "Iraq", "Japan", "Israel", "Myanmar", "Singapore", "Hong Kong, China", "Korea, Rep.", "Korea, Dem. Rep."))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Asia %>%
+  filter(country %in% c("India" ,"China","Kuwait", "Cambodia", "Iraq", "Japan", "Israel", "Myanmar", "Singapore", "Hong Kong, China", "Korea, Rep.", "Korea, Dem. Rep."))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Europe %>%
+  filter(country %in% c("Romania", "Bulgaria", "Hungary", "Albania", "Ireland", "Norway", "Iceland", "Netherland", "Sweden", "Denmark", "Switzerland"))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Europe %>%
+  filter(country %in% c("Croatia","Serbia","Slovenia","Iceland","Romania", "Finland","Bulgaria", "Hungary", "Albania", "Ireland", "Norway", "Iceland", "Netherland", "Sweden", "Denmark", "Switzerland"))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Europe %>%
+  filter(country %in% c("Germany", "Turkey" , "Croatia","Serbia","Slovenia","Iceland","Romania", "Finland","Bulgaria", "Hungary", "Albania", "Ireland", "Norway", "Iceland", "Netherland", "Sweden", "Denmark", "Switzerland"))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Americas %>%
+  filter(country %in% c( "Uruguay","Venezuela","Argentina", "Nicaragua", "El Salvador", "Chile", "Cuba", "Puerto Rico", "Costa Rica", "Canada", "United States"))
+ggplot(za, aes(year, lifeExp, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Americas %>%
+  filter(country %in% c( "Uruguay","Venezuela","Argentina", "Nicaragua", "El Salvador", "Chile", "Cuba", "Puerto Rico", "Costa Rica", "Canada", "United States"))
+ggplot(za, aes(year, gdpPercap, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+za <- Americas %>%
+  filter(country %in% c( "Uruguay","Venezuela","Argentina", "Nicaragua", "El Salvador", "Chile", "Cuba", "Puerto Rico", "Costa Rica", "Canada", "United States"))
+ggplot(za, aes(year, pop, colour = country)) + geom_line() + geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5))
+
+
