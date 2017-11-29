@@ -37,6 +37,7 @@ library(stargazer)
 library(pander)
 library(data.table)
 library(tidyr)
+library(corrplot)
 ```
 
 Lets have a general overview of the data, the first number represents the number of rows or observations and next number represents number of columns or features present in the dataset. We can also see the features mentioned above.
@@ -82,6 +83,10 @@ aba <- gapy %>%
 library(knitr)
 options(knitr.kable.NA = "")
 knitr::kable(aba, digits = 2)
+
+M <- cor(gapminder[4:6])
+corrplot.mixed(M)
+kable(M)
 
 Africa <- gapminder %>%
   filter( continent == "Africa")
