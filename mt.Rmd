@@ -2,12 +2,16 @@
 title: "Analysis of socio-economic standards among various countries and continents"
 author: "Aman"
 date: "16/11/2017"
-output: html_document
-runtime: shiny
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 ```
 #Introduction
 
@@ -38,12 +42,14 @@ library(pander)
 library(data.table)
 library(tidyr)
 library(corrplot)
+library(factoextra)
+library(NbClust)
 ```
 
 Lets have a general overview of the data, the first number represents the number of rows or observations and next number represents number of columns or features present in the dataset. We can also see the features mentioned above.
  **Number of rows = 1704** and **number of columns = 6**, Number of countries
 
-```{r, r, echo=FALSE, warning=FALSE, message=FALSE}
+```{r summary.table , echo=FALSE, warning=FALSE, message=FALSE}
 kable(gapminder[1:5, ], caption = "A table")
 
 gapSummary <- apply(gapminder[, 4:6], 2, function(x) tapply(x, gapminder$continent, 
@@ -84,13 +90,15 @@ library(knitr)
 options(knitr.kable.NA = "")
 knitr::kable(aba, digits = 2)
 
-M <- cor(gapminder[4:6])
-corrplot.mixed(M)
-kable(M)
 
 Africa <- gapminder %>%
   filter( continent == "Africa")
+```
 
+
+
+
+```{r africa.plot}
 ggplot(Africa, aes(x = year, y = lifeExp, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
@@ -99,7 +107,12 @@ ggplot(Africa, aes(x = year, y = lifeExp, colour = country)) +
   theme_minimal() +
   theme(legend.position = "none") +
   expand_limits(y = 0)
+```
 
+Here is my plot 
+
+
+```{r}
 ggplot(Africa, aes(x = year, y = gdpPercap, colour = country)) + 
   geom_line() + 
   theme(legend.position = "none") + 
@@ -233,9 +246,39 @@ ggplot(Oceania, aes(x = year, y = pop, colour = country)) +
   theme_minimal() +
   theme(legend.position = "none")
 
+a <- gapminder %>%
+  filter( country %in% c("United States" , "Canada", "United Kingdom", "India", "Brazil"))
+
+ggplot(a, aes(x = year, y = lifeExp, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  theme_minimal()
+
+ggplot(a, aes(x = year, y = pop, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  theme_minimal()
+
+ggplot(a, aes(x = year, y = gdpPercap, colour = country)) + 
+  geom_line() + 
+  theme(legend.position = "none") + 
+  geom_dl(aes(label = country), method = list(dl.combine("first.points", "last.points"), cex = 0.5)) +
+  theme_minimal()
+
+
+M <- cor(gapminder[4:6])
+corrplot.mixed(M)
+kable(M)
+
 
 ```
 
+
+```{r}
+cor.test(gapminder$pop, gapminder$gdpPercap)
+```
 
 
 ```{r, echo=FALSE}
@@ -311,6 +354,12 @@ ggplot(by_year_continent, aes(x = year, y = medianGdpPercap, color = continent))
   theme_minimal()
 
 ggplot(gapminder, aes(continent, pop)) + geom_boxplot(notch = TRUE, outlier.colour = "red") + scale_y_log10() + geom_jitter(width = 0.2)
+
+ggplot(gapminder, aes(continent, gdpPercap)) + geom_boxplot(notch = TRUE, outlier.colour = "red") + geom_jitter(width = 0.2)
+
+ggplot(gapminder, aes(continent, lifeExp)) + geom_boxplot(notch = TRUE, outlier.colour = "red") + geom_jitter(width = 0.2)
+
+
 
 ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
   geom_point() +
@@ -455,6 +504,36 @@ America_bylifeExp <- gapminder %>%
    arrange(desc(lifeExp))
 
 America_bylifeExp
+
+
+clusters <- kmeans(
+  x = gapminder[, 4:6], 
+  centers = 5, 
+  nstart = 10)
+
+# Plot each cluster as a shape
+plot(
+  x = gapminder$lifeExp, 
+  y = gapminder$gdpPercap, 
+  col = as.numeric(gapminder$continent), 
+  pch = clusters$cluster)
+
+# Plot centroid of clusters
+points(
+  x = clusters$centers[, "lifeExp"], 
+  y = clusters$centers[, "gdpPercap"],
+  pch = 4, 
+  lwd = 4, 
+  col = "blue")
+
+# View a table of the clusters
+table(
+  x = clusters$cluster, 
+  y = gapminder$continent)
+
+fviz_nbclust( gapminder[, 4:6], kmeans, method = "wss")
+fviz_nbclust( gapminder[, 4:6], kmeans, method = "silhouette")
+fviz_nbclust( gapminder[, 4:6], kmeans, nstart = 25, method = "gap_stat", nboot = 50)
 ```
 
 
