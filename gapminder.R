@@ -2,7 +2,7 @@ library(gapminder)
 
 clusters <- kmeans(
   x = gapminder[, 4:6], 
-  centers = 5, 
+  centers = 2, 
   nstart = 10)
 
 # Plot each cluster as a shape
